@@ -3,474 +3,418 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Documento Confidencial - FENSTER</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <title>Credenciales de Acceso - FENSTER</title>
   <style>
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    .font-garamond { font-family: 'Cormorant Garamond', serif; }
-    .font-sans-ui { font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    /* Custom Vintage Parchment Background Texture */
-    .bg-parchment {
-      background-color: #fcf8f0;
-      background-image: 
-        radial-gradient(#e2d5bd 1.2px, transparent 0),
-        radial-gradient(#e2d5bd 1.2px, #fcf8f0 0);
-      background-size: 24px 24px;
-      background-position: 0 0, 12px 12px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Envelope Container & 3D Perspective */
-    .perspective-1000 {
-      perspective: 1200px;
+    body {
+      background-color: #12100e;
+      background-image: radial-gradient(circle at 50% 30%, #2a2018 0%, #12100e 80%);
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #333;
+      overflow-x: hidden;
     }
 
-    /* Envelope Container Smooth Shift Down when Opened */
-    .envelope-wrapper {
-      transition: transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
-      transform: translateY(0);
+    .instruction {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #d4af37;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+      text-align: center;
+      transition: opacity 0.4s ease;
     }
 
-    .envelope-container.open .envelope-wrapper {
-      transform: translateY(140px);
+    /* Escenario principal */
+    .stage {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      min-height: 280px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    @media (min-width: 640px) {
-      .envelope-container.open .envelope-wrapper {
-        transform: translateY(180px);
-      }
-    }
-
-    /* Envelope Flap 3D Animation */
-    .envelope-flap {
-      transform-origin: top;
-      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.7s;
-      z-index: 25;
-    }
-
-    .envelope-container.open .envelope-flap {
-      transform: rotateX(180deg);
-      z-index: 5;
-    }
-
-    /* Wax Seal Burst & Fade Effect */
-    .wax-seal {
-      transition: transform 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
-      background: radial-gradient(circle at 35% 35%, #9f1239 0%, #881337 50%, #4c0519 100%);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -3px 6px rgba(0,0,0,0.6);
-    }
-
-    .envelope-container.open .wax-seal {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(1.6) rotate(20deg);
-      pointer-events: none;
-    }
-
-    /* Sliding Parchment Letter - Complete Visibility Fix */
-    .letter-paper {
-      transition: transform 0.85s cubic-bezier(0.34, 1.25, 0.64, 1), z-index 0.85s, box-shadow 0.85s;
-      transform: translateY(0);
+    /* Estructura del Sobre */
+    .envelope-box {
+      position: relative;
+      width: 380px;
+      height: 240px;
+      background-color: #c39257;
+      border-radius: 8px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      overflow: hidden; /* Evita que sobresalga la carta al estar cerrado */
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
       z-index: 10;
     }
 
-    /* When opened: Slide up cleanly OVER the front pocket so 100% of document is visible */
-    .envelope-container.open .letter-paper {
-      transform: translateY(-310px);
-      z-index: 40;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* Solapas del sobre */
+    .envelope-flap-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 190px solid transparent;
+      border-right: 190px solid transparent;
+      border-top: 135px solid #d4a266;
+      transform-origin: top;
+      transition: transform 0.5s ease-in-out, z-index 0.5s;
+      z-index: 5;
     }
 
-    @media (min-width: 640px) {
-      .envelope-container.open .letter-paper {
-        transform: translateY(-370px);
-      }
+    .envelope-pocket {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 190px solid #b28148;
+      border-right: 190px solid #b28148;
+      border-bottom: 125px solid #9e6f37;
+      z-index: 4;
+      pointer-events: none;
     }
 
-    /* Pulse Glow for Wax Seal */
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 15px rgba(217, 119, 6, 0.4), inset 0 2px 4px rgba(255,255,255,0.3); }
-      50% { box-shadow: 0 0 32px rgba(217, 119, 6, 0.8), inset 0 2px 4px rgba(255,255,255,0.5); }
-    }
-    .glow-gold {
-      animation: pulse-glow 2.5s infinite;
+    /* Sello de lacre */
+    .seal {
+      position: absolute;
+      top: 105px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 56px;
+      height: 56px;
+      background: radial-gradient(circle, #a81c1c 0%, #6e0d0d 100%);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      border: 2px solid #540808;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f1c40f;
+      font-size: 24px;
+      z-index: 6;
+      transition: all 0.4s ease;
     }
 
-    /* Toast Notification Animation */
-    .toast-enter {
-      transform: translateY(100%) scale(0.9);
+    /* Tarjeta / Carta desplegable */
+    .letter-card {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      max-width: 460px;
+      background: #fdfcf7;
+      background-image: radial-gradient(#e2d9cc 1px, transparent 1px);
+      background-size: 16px 16px;
+      border: 1px solid #dcd1be;
+      border-radius: 12px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       opacity: 0;
+      transform: translateY(60px) scale(0.9);
+      pointer-events: none;
+      transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1;
     }
-    .toast-active {
-      transform: translateY(0) scale(1);
+
+    /* Estado de Apertura */
+    .stage.open .instruction {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stage.open .envelope-box {
+      transform: translateY(180px) scale(0.8);
+      opacity: 0.25;
+      overflow: visible;
+    }
+
+    .stage.open .envelope-flap-top {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .stage.open .seal {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.2);
+      pointer-events: none;
+    }
+
+    .stage.open .letter-card {
       opacity: 1;
+      transform: translateY(-90px) scale(1);
+      pointer-events: auto;
+      z-index: 20;
+    }
+
+    /* Diseño interno del documento */
+    .letter-header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px dashed #c5a059;
+      padding-bottom: 12px;
+    }
+
+    .letter-subtitle {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #8c734b;
+      margin-bottom: 6px;
+    }
+
+    .letter-title {
+      font-size: 28px;
+      color: #2c1a0e;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .letter-desc {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      color: #665a4e;
+    }
+
+    /* Lista de credenciales */
+    .cred-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .cred-item {
+      background: #ffffff;
+      border: 1px solid #e8e1d5;
+      border-left: 4px solid #8b0000;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .cred-role {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #8b0000;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .cred-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #222;
+      background: #f8f6f0;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    .cred-val {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-copy {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #e2dacd;
+      border: none;
+      color: #4a3b2c;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .btn-copy:hover {
+      background: #8b0000;
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #8b0000 0%, #630000 100%);
+      color: #ffffff;
+      text-align: center;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(139, 0, 0, 0.4);
+    }
+
+    .btn-reseal {
+      display: block;
+      margin: 16px auto 0;
+      background: none;
+      border: none;
+      color: #8c734b;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    @media (max-width: 480px) {
+      .envelope-box {
+        width: 310px;
+        height: 200px;
+      }
+      .envelope-flap-top {
+        border-left-width: 155px;
+        border-right-width: 155px;
+        border-top-width: 110px;
+      }
+      .envelope-pocket {
+        border-left-width: 155px;
+        border-right-width: 155px;
+        border-bottom-width: 105px;
+      }
+      .seal {
+        top: 85px;
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+      }
+      .letter-card {
+        padding: 20px 16px;
+      }
+      .stage.open .letter-card {
+        transform: translateY(-50px) scale(1);
+      }
+      .stage.open .envelope-box {
+        transform: translateY(240px) scale(0.65);
+      }
     }
   </style>
 </head>
-<body class="bg-stone-950 text-stone-100 min-h-screen font-sans-ui flex flex-col justify-between items-center overflow-x-hidden selection:bg-amber-500 selection:text-stone-900 relative">
+<body>
 
-  <!-- Ambient Atmospheric Lighting -->
-  <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_30%,_var(--tw-gradient-stops))] from-amber-950/40 via-stone-950/90 to-stone-950 z-0"></div>
+  <div class="instruction" id="instructionText">Haz clic en el sello para abrir</div>
 
-  <!-- Particles Canvas for Celebration Confetti -->
-  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
-
-  <!-- Header & Instructions -->
-  <header class="relative z-10 text-center pt-6 pb-2 px-4 max-w-xl mx-auto">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold uppercase tracking-widest mb-2 backdrop-blur-md">
-      <svg class="w-3.5 h-3.5 animate-pulse text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-      Acceso Exclusivo Confidencial
-    </div>
-    <h1 id="instructionHeading" class="font-cinzel text-xl sm:text-2xl font-bold text-amber-100/90 tracking-wider">
-      HAZ CLIC EN EL SELLO PARA ABRIR
-    </h1>
-    <p id="instructionText" class="text-stone-400 text-xs sm:text-sm mt-1 font-garamond italic">
-      Presiona el lacre oficial para romper la correspondencia y revelar el documento
-    </p>
-  </header>
-
-  <!-- Main Envelope Interactive Area -->
-  <main class="relative z-10 my-auto py-16 px-4 w-full flex flex-col items-center justify-center min-h-[520px] sm:min-h-[600px]">
+  <div class="stage" id="stage">
     
-    <div id="envelopeContainer" class="envelope-container perspective-1000 relative w-[340px] sm:w-[500px] h-[210px] sm:h-[260px] cursor-pointer group select-none" onclick="toggleEnvelope()">
-      
-      <!-- Envelope Wrapper for Downward Shift -->
-      <div class="envelope-wrapper relative w-full h-full">
+    <!-- SOBRE -->
+    <div class="envelope-box" onclick="toggleEnvelope()">
+      <div class="envelope-flap-top"></div>
+      <div class="seal">★</div>
+      <div class="envelope-pocket"></div>
+    </div>
+
+    <!-- CARTA CONFIDENCIAL -->
+    <div class="letter-card">
+      <div class="letter-header">
+        <div class="letter-subtitle">Documento Confidencial — FENSTER</div>
+        <div class="letter-title">¡Gracias Julio!</div>
+        <div class="letter-desc">Aquí tienes las credenciales de acceso listas para probar:</div>
+      </div>
+
+      <div class="cred-list">
         
-        <!-- ENVELOPE BACK INTERIOR (Dark Cavity) -->
-        <div class="absolute inset-0 bg-stone-900 rounded-lg shadow-2xl border border-amber-900/40 overflow-hidden">
-          <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:12px_12px]"></div>
-        </div>
-
-        <!-- PARCHMENT LETTER (Fully Displayed when Unfolded) -->
-        <div id="letterPaper" class="letter-paper absolute left-2 right-2 sm:left-4 sm:right-4 bottom-2 top-2 bg-parchment rounded-lg border-2 border-amber-800/30 p-5 sm:p-7 flex flex-col justify-between">
-          
-          <!-- Header & Thank You Message -->
-          <div class="border-b-2 border-amber-900/20 pb-3 text-center">
-            <div class="font-cinzel text-[10px] sm:text-xs text-amber-900/70 font-bold tracking-widest uppercase">
-              DOCUMENTO CONFIDENCIAL — FENSTER
-            </div>
-            <h2 class="font-garamond text-3xl sm:text-4xl font-extrabold text-amber-950 mt-1 leading-none tracking-tight">
-              ¡Gracias Julio!
-            </h2>
-            <p class="text-xs sm:text-sm text-amber-900/80 mt-1 font-medium">Aquí tienes las credenciales de acceso listas para probar:</p>
+        <!-- Admin FENSTER -->
+        <div class="cred-item">
+          <div class="cred-role">Admin FENSTER</div>
+          <div class="cred-row">
+            <span class="cred-val">admin@fenster.test</span>
+            <button class="btn-copy" onclick="copyText('admin@fenster.test', this)">Copiar Email</button>
           </div>
-
-          <!-- Credentials Table -->
-          <div class="my-3 overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="border-b border-amber-900/20 text-amber-900 font-cinzel text-[10px] sm:text-xs tracking-wider">
-                  <th class="py-1 px-1">TIPO DE USUARIO</th>
-                  <th class="py-1 px-1">EMAIL</th>
-                  <th class="py-1 px-1 text-right">CONTRASEÑA</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-amber-900/10 text-stone-900 text-xs sm:text-sm">
-                
-                <!-- Row 1: Admin -->
-                <tr class="hover:bg-amber-900/5 transition-colors">
-                  <td class="py-2 px-1 font-bold text-amber-950 text-xs">Admin FENSTER</td>
-                  <td class="py-2 px-1 font-mono text-[11px] sm:text-xs">
-                    <button onclick="copyData('admin@fenster.test', 'Email Admin', event)" class="inline-flex items-center gap-1.5 hover:text-amber-800 bg-amber-900/5 hover:bg-amber-900/15 px-2 py-1 rounded border border-amber-900/15 transition-all font-semibold" title="Haz clic para copiar">
-                      admin@fenster.test
-                      <svg class="w-3 h-3 text-amber-800 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                  </td>
-                  <td class="py-2 px-1 font-mono text-[11px] sm:text-xs text-right">
-                    <button onclick="copyData('Fenster2026!', 'Contraseña Admin', event)" class="inline-flex items-center gap-1.5 hover:text-amber-800 bg-amber-900/5 hover:bg-amber-900/15 px-2 py-1 rounded border border-amber-900/15 transition-all font-semibold" title="Haz clic para copiar">
-                      <span class="font-bold text-amber-950">Fenster2026!</span>
-                      <svg class="w-3 h-3 text-amber-800 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                  </td>
-                </tr>
-
-                <!-- Row 2: Comercial -->
-                <tr class="hover:bg-amber-900/5 transition-colors">
-                  <td class="py-2 px-1 font-bold text-amber-950 text-xs">Comercial</td>
-                  <td class="py-2 px-1 font-mono text-[11px] sm:text-xs">
-                    <button onclick="copyData('comercial@fenster.test', 'Email Comercial', event)" class="inline-flex items-center gap-1.5 hover:text-amber-800 bg-amber-900/5 hover:bg-amber-900/15 px-2 py-1 rounded border border-amber-900/15 transition-all font-semibold" title="Haz clic para copiar">
-                      comercial@fenster.test
-                      <svg class="w-3 h-3 text-amber-800 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                  </td>
-                  <td class="py-2 px-1 font-mono text-[11px] sm:text-xs text-right">
-                    <button onclick="copyData('Fenster2026!', 'Contraseña Comercial', event)" class="inline-flex items-center gap-1.5 hover:text-amber-800 bg-amber-900/5 hover:bg-amber-900/15 px-2 py-1 rounded border border-amber-900/15 transition-all font-semibold" title="Haz clic para copiar">
-                      <span class="font-bold text-amber-950">Fenster2026!</span>
-                      <svg class="w-3 h-3 text-amber-800 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                  </td>
-                </tr>
-
-                <!-- Row 3: Partner -->
-                <tr class="hover:bg-amber-900/5 transition-colors">
-                  <td class="py-2 px-1 font-bold text-amber-950 text-xs">Partner (cliente)</td>
-                  <td class="py-2 px-1 font-mono text-[11px] sm:text-xs">
-                    <button onclick="copyData('partner@fenster.test', 'Email Partner', event)" class="inline-flex items-center gap-1.5 hover:text-amber-800 bg-amber-900/5 hover:bg-amber-900/15 px-2 py-1 rounded border border-amber-900/15 transition-all font-semibold" title="Haz clic para copiar">
-                      partner@fenster.test
-                      <svg class="w-3 h-3 text-amber-800 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                  </td>
-                  <td class="py-2 px-1 font-mono text-[11px] sm:text-xs text-right">
-                    <button onclick="copyData('Fenster2026!', 'Contraseña Partner', event)" class="inline-flex items-center gap-1.5 hover:text-amber-800 bg-amber-900/5 hover:bg-amber-900/15 px-2 py-1 rounded border border-amber-900/15 transition-all font-semibold" title="Haz clic para copiar">
-                      <span class="font-bold text-amber-950">Fenster2026!</span>
-                      <svg class="w-3 h-3 text-amber-800 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="cred-row">
+            <span class="cred-val">Fenster2026!</span>
+            <button class="btn-copy" onclick="copyText('Fenster2026!', this)">Copiar Clave</button>
           </div>
+        </div>
 
-          <!-- Call to Action Link -->
-          <div class="pt-2 text-center">
-            <a href="https://town-unexpected-delivers-random.trycloudflare.com" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-amber-800 via-amber-900 to-amber-950 hover:from-amber-700 hover:to-amber-900 text-amber-50 font-bold text-xs sm:text-sm rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:translate-y-0 border border-amber-600/40 group">
-              <span>Probar Entorno de Pruebas</span>
-              <svg class="w-4 h-4 text-amber-300 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-            </a>
+        <!-- Comercial -->
+        <div class="cred-item">
+          <div class="cred-role">Comercial</div>
+          <div class="cred-row">
+            <span class="cred-val">comercial@fenster.test</span>
+            <button class="btn-copy" onclick="copyText('comercial@fenster.test', this)">Copiar Email</button>
           </div>
-
+          <div class="cred-row">
+            <span class="cred-val">Fenster2026!</span>
+            <button class="btn-copy" onclick="copyText('Fenster2026!', this)">Copiar Clave</button>
+          </div>
         </div>
 
-        <!-- ENVELOPE FRONT POCKET (Lower flap) -->
-        <div class="absolute inset-0 pointer-events-none z-20 overflow-hidden rounded-lg">
-          <svg class="absolute bottom-0 left-0 w-full h-[65%] drop-shadow-[0_-4px_8px_rgba(0,0,0,0.35)]" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polygon points="0,100 100,100 100,0 50,50 0,0" fill="#a16207" />
-            <polygon points="0,100 100,100 100,0 50,50 0,0" fill="url(#pocketGradient)" />
-            <defs>
-              <linearGradient id="pocketGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-                <stop offset="0%" stop-color="#78350f" stop-opacity="0.95" />
-                <stop offset="100%" stop-color="#b45309" stop-opacity="0.95" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-
-        <!-- ENVELOPE TOP FLAP -->
-        <div class="envelope-flap absolute top-0 left-0 w-full h-[55%] pointer-events-none overflow-hidden rounded-t-lg">
-          <svg class="w-full h-full drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)]" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polygon points="0,0 100,0 50,100" fill="#92400e" />
-            <polygon points="0,0 100,0 50,100" fill="url(#flapGradient)" />
-            <defs>
-              <linearGradient id="flapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#b45309" />
-                <stop offset="100%" stop-color="#78350f" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-
-        <!-- WAX SEAL -->
-        <div class="wax-seal absolute top-[52%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 sm:w-16 sm:h-16 rounded-full z-30 flex items-center justify-center cursor-pointer glow-gold group-hover:scale-105">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-amber-300/50 flex items-center justify-center bg-rose-950/60 shadow-inner">
-            <!-- Gold Star Emblem -->
-            <svg class="w-6 h-6 text-amber-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
+        <!-- Partner (cliente) -->
+        <div class="cred-item">
+          <div class="cred-role">Partner (cliente)</div>
+          <div class="cred-row">
+            <span class="cred-val">partner@fenster.test</span>
+            <button class="btn-copy" onclick="copyText('partner@fenster.test', this)">Copiar Email</button>
+          </div>
+          <div class="cred-row">
+            <span class="cred-val">Fenster2026!</span>
+            <button class="btn-copy" onclick="copyText('Fenster2026!', this)">Copiar Clave</button>
           </div>
         </div>
 
       </div>
 
+      <a href="https://town-unexpected-delivers-random.trycloudflare.com" target="_blank" class="btn-primary">
+        Probar Entorno de Pruebas &rarr;
+      </a>
+
+      <button class="btn-reseal" onclick="toggleEnvelope()">Volver a sellar el sobre</button>
     </div>
 
-  </main>
-
-  <!-- Bottom Action Footer -->
-  <footer class="relative z-10 pb-8 px-4 flex flex-col items-center gap-3">
-    <button id="resetBtn" onclick="toggleEnvelope()" class="hidden items-center gap-2 px-5 py-2 rounded-full bg-stone-900/90 hover:bg-stone-800 border border-stone-700/80 text-stone-300 text-xs font-semibold transition-all shadow-lg backdrop-blur-md hover:text-amber-300">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-      <span>Cerrar / Volver a sellar el sobre</span>
-    </button>
-  </footer>
-
-  <!-- Toast Notification Alert -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 toast-enter">
-    <div class="bg-stone-900/95 border border-amber-500/50 text-amber-200 px-5 py-2.5 rounded-full shadow-2xl text-xs sm:text-sm font-semibold flex items-center gap-2.5 backdrop-blur-md">
-      <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-      <span id="toastMsg">Copiado al portapapeles</span>
-    </div>
   </div>
 
   <script>
-    let isOpen = false;
-
-    // Toggle Open / Close State
     function toggleEnvelope() {
-      const container = document.getElementById('envelopeContainer');
-      const resetBtn = document.getElementById('resetBtn');
-      const instructionHeading = document.getElementById('instructionHeading');
-      const instructionText = document.getElementById('instructionText');
-
-      isOpen = !isOpen;
-
-      if (isOpen) {
-        container.classList.add('open');
-        resetBtn.classList.remove('hidden');
-        resetBtn.classList.add('flex');
-        
-        instructionHeading.innerText = "DOCUMENTO DESPLEGADO";
-        instructionText.innerText = "Haz clic en cualquier credencial para copiarla al portapapeles";
-        
-        playUnsealSound();
-        triggerConfetti();
-      } else {
-        container.classList.remove('open');
-        resetBtn.classList.add('hidden');
-        resetBtn.classList.remove('flex');
-
-        instructionHeading.innerText = "HAZ CLIC EN EL SELLO PARA ABRIR";
-        instructionText.innerText = "Presiona el lacre oficial para romper la correspondencia y revelar el documento";
-      }
+      document.getElementById('stage').classList.toggle('open');
     }
 
-    // Copy to Clipboard with Toast Notification
-    function copyData(text, label, event) {
-      if (event) event.stopPropagation();
-
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      
-      try {
-        document.execCommand('copy');
-        showToast(`¡${label} copiada al portapapeles!`);
-      } catch (err) {
-        console.error('Error al copiar', err);
-      }
-      
-      document.body.removeChild(textarea);
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '¡Copiado!';
+        btn.style.background = '#2e7d32';
+        btn.style.color = '#ffffff';
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.background = '#e2dacd';
+          btn.style.color = '#4a3b2c';
+        }, 1500);
+      });
     }
-
-    // Display Toast Alert
-    let toastTimeout;
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMsg');
-      
-      toastMsg.innerText = message;
-      toast.classList.remove('toast-enter');
-      toast.classList.add('toast-active');
-
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.remove('toast-active');
-        toast.classList.add('toast-enter');
-      }, 2200);
-    }
-
-    // Web Audio Synthesizer for paper/seal opening effect
-    function playUnsealSound() {
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        const ctx = new AudioContext();
-
-        const bufferSize = ctx.sampleRate * 0.35;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(900, ctx.currentTime);
-        filter.Q.setValueAtTime(2.5, ctx.currentTime);
-
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.35, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-
-        noise.start();
-      } catch (e) {
-        // Fallback gracefully if Web Audio disabled
-      }
-    }
-
-    // Confetti Burst Effect
-    function triggerConfetti() {
-      const canvas = document.getElementById('confettiCanvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const particles = [];
-      const colors = ['#f59e0b', '#d97706', '#b45309', '#fef3c7', '#be123c', '#fbbf24'];
-
-      for (let i = 0; i < 50; i++) {
-        particles.push({
-          x: canvas.width / 2,
-          y: canvas.height / 2 - 50,
-          vx: (Math.random() - 0.5) * 14,
-          vy: (Math.random() - 0.7) * 15,
-          size: Math.random() * 7 + 4,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          rotation: Math.random() * 360,
-          vRot: (Math.random() - 0.5) * 12,
-          opacity: 1
-        });
-      }
-
-      function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        let active = false;
-
-        particles.forEach(p => {
-          if (p.opacity <= 0) return;
-          active = true;
-
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.28; // Gravity
-          p.rotation += p.vRot;
-          p.opacity -= 0.016;
-
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate((p.rotation * Math.PI) / 180);
-          ctx.globalAlpha = Math.max(0, p.opacity);
-          ctx.fillStyle = p.color;
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-          ctx.restore();
-        });
-
-        if (active) {
-          requestAnimationFrame(render);
-        } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-      }
-
-      requestAnimationFrame(render);
-    }
-
-    // Dynamic Canvas Resize Listener
-    window.addEventListener('resize', () => {
-      const canvas = document.getElementById('confettiCanvas');
-      if (canvas) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-    });
   </script>
+
 </body>
 </html>
